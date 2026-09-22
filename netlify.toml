@@ -1,0 +1,8 @@
+[build]
+  # 정적 사이트 — 빌드 과정 없이 저장소 루트를 그대로 게시합니다.
+  publish = "."
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200

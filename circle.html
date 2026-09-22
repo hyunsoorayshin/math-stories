@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원과 부채꼴 탐험 — 공식이 아니라 이야기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#26244f;
+  --indigo-900:#312e81;
+  --indigo-700:#4338ca;
+  --indigo-500:#6366f1;
+  --indigo-100:#e0e7ff;
+  --indigo-050:#eef1ff;
+  --gold-700:#a97b0a;
+  --gold:#d4a017;
+  --gold-soft:#f9efd4;
+  --paper:#fbfaf7;
+  --card:#ffffff;
+  --line:#dcdaea;
+  --ok:#15803d;
+  --ok-soft:#dcfce7;
+  --no:#b91c1c;
+  --no-soft:#fee2e2;
+  --r-lg:16px;
+  --r-md:12px;
+  --shadow:0 1px 2px rgba(38,36,79,.06),0 6px 20px rgba(38,36,79,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.65;
+  font-size:16px;
+}
+.serif{font-family:'Gowun Batang','Noto Sans KR',serif}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+
+/* ---------- header ---------- */
+header.site{
+  background:linear-gradient(135deg,var(--indigo-900) 0%,#3b3a94 60%,#4a3f96 100%);
+  color:#fff;
+  padding:26px 0 20px;
+}
+.home-link{
+  display:inline-flex;align-items:center;gap:6px;
+  color:#cdd3ff;text-decoration:none;
+  font-size:12.5px;font-weight:700;letter-spacing:.02em;
+  margin-bottom:12px;
+  transition:color .15s;
+}
+.home-link:hover{color:#f2cf6b}
+.home-link svg{transition:transform .15s}
+.home-link:hover svg{transform:translateX(-3px)}
+.home-link:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
+.head-row{display:flex;align-items:center;gap:18px;justify-content:space-between}
+.head-title h1{font-family:'Gowun Batang',serif;font-size:clamp(24px,4.5vw,34px);font-weight:700;letter-spacing:-.01em}
+.head-title h1 .gold{color:#f2cf6b}
+.head-title p{margin-top:6px;font-size:clamp(12.5px,2.6vw,14.5px);color:#cdd3ff;font-weight:400}
+.progress-wheel{flex:0 0 auto;text-align:center}
+.progress-wheel svg{display:block}
+.progress-wheel .pw-label{font-size:11px;color:#cdd3ff;margin-top:4px;letter-spacing:.04em}
+
+/* ---------- tabs ---------- */
+nav.tabs{
+  position:sticky;top:0;z-index:50;
+  background:rgba(251,250,247,.94);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.tabs-inner{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;max-width:880px;margin:0 auto;scrollbar-width:none}
+.tabs-inner::-webkit-scrollbar{display:none}
+.tab-btn{
+  flex:0 0 auto;
+  border:1.5px solid var(--line);
+  background:#fff;color:var(--ink);
+  border-radius:999px;
+  padding:8px 14px;
+  font-size:13.5px;font-weight:700;
+  font-family:inherit;
+  cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  transition:background .15s,border-color .15s,color .15s;
+  white-space:nowrap;
+}
+.tab-btn .tno{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--indigo-100);color:var(--indigo-900);
+  font-size:11.5px;font-weight:900;
+}
+.tab-btn.active{background:var(--indigo-900);border-color:var(--indigo-900);color:#fff}
+.tab-btn.active .tno{background:var(--gold);color:#fff}
+.tab-btn .done{color:var(--gold-700);font-weight:900;display:none}
+.tab-btn.active .done{color:#f2cf6b}
+.tab-btn.is-done .done{display:inline}
+.tab-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---------- sections / cards ---------- */
+main{padding:26px 0 60px}
+.tabpanel{display:none}
+.tabpanel.active{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.secbar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--indigo-900);color:#fff;
+  border-radius:10px;padding:10px 14px;
+  margin:30px 0 14px;
+  box-shadow:var(--shadow);
+}
+.secbar:first-child{margin-top:0}
+.secbar .notch{width:6px;height:22px;border-radius:3px;background:var(--gold);flex:0 0 auto}
+.secbar h2{font-size:16.5px;font-weight:800;letter-spacing:-.01em}
+.secbar .sub{margin-left:auto;font-size:12px;color:#cdd3ff;font-weight:500}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  padding:20px;
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+.card p{margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+.lede{font-size:15.5px}
+.small{font-size:13px;color:#5a5880}
+.kbox{
+  background:var(--indigo-050);
+  border:1.5px solid var(--indigo-100);
+  border-left:5px solid var(--indigo-700);
+  border-radius:var(--r-md);
+  padding:12px 16px;margin:12px 0;
+  font-size:15px;
+}
+.kbox.gold{background:var(--gold-soft);border-color:#eeddb0;border-left-color:var(--gold)}
+.kbox b{color:var(--indigo-900)}
+.formula{
+  font-family:'Gowun Batang',serif;
+  font-size:clamp(18px,3.6vw,22px);
+  text-align:center;
+  padding:6px 0;
+  color:var(--indigo-900);
+  font-weight:700;
+}
+.formula .g{color:var(--gold-700)}
+svg text{font-family:'Noto Sans KR',sans-serif}
+.figure{width:100%;display:block;margin:8px auto;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+.figwrap{background:#fdfdfb;border:1px solid var(--line);border-radius:var(--r-md);padding:10px;margin:10px 0}
+.ctrl-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 4px}
+.ctrl-row label{font-size:13.5px;font-weight:700;color:var(--indigo-900)}
+input[type=range]{
+  flex:1;min-width:140px;accent-color:var(--indigo-700);height:28px;cursor:pointer;
+}
+.btn{
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;border-radius:10px;
+  padding:9px 16px;cursor:pointer;
+  background:var(--indigo-700);color:#fff;
+  transition:transform .08s,background .15s;
+}
+.btn:active{transform:scale(.97)}
+.btn.gold{background:var(--gold);color:#fff}
+.btn.ghost{background:#fff;color:var(--indigo-900);border:1.5px solid var(--line)}
+.btn.sm{font-size:13px;padding:7px 12px}
+.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.readout{
+  font-size:14.5px;background:var(--indigo-050);border-radius:10px;
+  padding:8px 14px;font-weight:600;color:var(--indigo-900);
+}
+.readout .g{color:var(--gold-700)}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.term-btn{
+  font-family:inherit;font-size:13.5px;font-weight:700;
+  border:1.5px solid var(--line);border-radius:999px;
+  background:#fff;color:var(--ink);padding:7px 13px;cursor:pointer;
+}
+.term-btn.active{background:var(--indigo-700);border-color:var(--indigo-700);color:#fff}
+.term-desc{min-height:52px;font-size:14.5px;background:var(--gold-soft);border:1px solid #eeddb0;border-radius:10px;padding:10px 14px;margin-top:10px}
+.term-desc b{color:var(--gold-700)}
+
+/* history cards */
+.hist-strip{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px}
+.hist-card{
+  flex:0 0 168px;background:#fff;border:1.5px solid var(--line);
+  border-radius:var(--r-md);padding:12px;
+}
+.hist-card .era{font-size:11px;font-weight:900;color:var(--gold-700);letter-spacing:.05em}
+.hist-card .who{font-family:'Gowun Batang',serif;font-weight:700;font-size:15.5px;margin:2px 0}
+.hist-card .val{font-size:18px;font-weight:900;color:var(--indigo-900)}
+.hist-card .note{font-size:12px;color:#5a5880;margin-top:4px;line-height:1.5}
+
+/* derivation steps */
+.derive{margin:8px 0}
+.dline{
+  display:flex;align-items:flex-start;gap:10px;
+  background:#fff;border:1.5px solid var(--line);border-radius:10px;
+  padding:10px 14px;margin-bottom:8px;
+  opacity:.28;transition:opacity .3s,border-color .3s;
+}
+.dline.shown{opacity:1;border-color:var(--indigo-100)}
+.dline.hot{border-color:var(--gold);background:var(--gold-soft)}
+.badge{
+  flex:0 0 auto;font-size:10.5px;font-weight:900;letter-spacing:.02em;
+  background:var(--indigo-100);color:var(--indigo-900);
+  border-radius:6px;padding:3px 7px;margin-top:3px;white-space:nowrap;
+}
+.badge.g{background:var(--gold-soft);color:var(--gold-700);border:1px solid #eeddb0}
+.dmath{font-family:'Gowun Batang',serif;font-size:16.5px;font-weight:700}
+.dmath .hl{background:#ffe9a8;border-radius:4px;padding:0 3px}
+.dmath .hl2{background:var(--indigo-100);border-radius:4px;padding:0 3px}
+.dmath .cancel{text-decoration:line-through;text-decoration-color:var(--no);text-decoration-thickness:2.5px;color:#8b89ad}
+.dnote{font-size:12.5px;color:#5a5880;margin-top:2px}
+
+/* details */
+details.deep{border:1.5px dashed var(--indigo-100);border-radius:var(--r-md);padding:12px 16px;margin:12px 0;background:#fff}
+details.deep summary{cursor:pointer;font-weight:800;color:var(--indigo-900);font-size:14.5px}
+details.deep[open] summary{margin-bottom:8px}
+
+/* checks */
+.check-item{border:1.5px solid var(--line);border-radius:var(--r-md);padding:14px 16px;margin-bottom:12px;background:#fff}
+.check-item .qhead{display:flex;gap:8px;align-items:baseline;margin-bottom:10px}
+.check-item .qno{
+  flex:0 0 auto;font-size:12px;font-weight:900;color:#fff;
+  background:var(--gold);border-radius:6px;padding:2px 8px;
+}
+.check-item .qtext{font-weight:700;font-size:15px}
+.opt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.opt{
+  font-family:inherit;font-size:14.5px;font-weight:600;
+  border:1.5px solid var(--line);border-radius:10px;background:#fff;
+  padding:10px;cursor:pointer;color:var(--ink);
+  transition:border-color .15s,background .15s;
+}
+.opt:not(:disabled):hover{border-color:var(--indigo-500)}
+.opt.correct{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:800}
+.opt.wrong{background:var(--no-soft);border-color:var(--no);color:var(--no)}
+.opt:disabled{cursor:default}
+.verdict{font-size:14px;font-weight:800;margin-top:10px;min-height:20px}
+.verdict.ok{color:var(--ok)}
+.verdict.no{color:var(--no)}
+.sol{
+  display:none;margin-top:10px;border-top:1.5px dashed var(--line);padding-top:10px;
+}
+.sol.open{display:block}
+.sol .sline{
+  display:flex;gap:8px;align-items:baseline;
+  font-size:14.5px;margin-bottom:6px;
+}
+.sol .sno{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--indigo-100);color:var(--indigo-900);font-size:11px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;transform:translateY(2px)}
+.sol .smath{font-family:'Gowun Batang',serif;font-weight:700}
+
+/* notes */
+.notes{background:var(--gold-soft);border:1.5px solid #eeddb0;border-radius:var(--r-lg);padding:16px 18px;margin-top:20px}
+.notes h3{font-size:15px;font-weight:900;color:var(--gold-700);display:flex;align-items:center;gap:8px}
+.notes p{font-size:13.5px;color:#6b5d33;margin:6px 0 10px}
+.notes textarea{
+  width:100%;min-height:64px;resize:vertical;
+  font-family:inherit;font-size:15px;line-height:1.6;
+  border:1.5px solid #e3cf97;border-radius:10px;padding:10px 12px;
+  background:#fffdf6;color:var(--ink);
+}
+.notes textarea:focus{outline:2px solid var(--gold)}
+.notes .nrow{display:flex;gap:10px;align-items:center;margin-top:8px}
+.notes .saved{font-size:12.5px;color:var(--ok);font-weight:700;opacity:0;transition:opacity .3s}
+.notes .saved.show{opacity:1}
+
+footer.site{border-top:1px solid var(--line);padding:22px 0 34px;text-align:center;font-size:12.5px;color:#8b89ad}
+footer.site .serif{font-size:14px;color:var(--indigo-900)}
+
+@media (max-width:560px){
+  .card{padding:16px 14px}
+  .head-row{gap:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s !important;transition-duration:.001s !important}
+}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="home-link" href="index.html"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M13 8H4M7.5 4l-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>단원 목록으로</a>
+  </div>
+  <div class="wrap head-row">
+    <div class="head-title">
+      <h1>원과 부채꼴 <span class="gold">탐험</span></h1>
+      <p class="serif">공식을 외우기 전에, 공식이 태어난 이야기부터. — 중1 2학기</p>
+    </div>
+    <div class="progress-wheel">
+      <svg id="pw" width="72" height="72" viewBox="0 0 72 72" aria-label="학습 진행도"></svg>
+      <div class="pw-label">내가 그린 원</div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="단원 탭">
+  <div class="tabs-inner" id="tabbar"></div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============================================================ TAB 0 -->
+<section class="tabpanel" id="panel-0" role="tabpanel" aria-labelledby="tabbtn-0">
+
+  <div class="secbar"><span class="notch"></span><h2>원의 부품 상자 — 용어 지도</h2><span class="sub">누르면 그림에 나타나요</span></div>
+  <div class="card">
+    <p class="lede">원 하나에는 생각보다 많은 부품이 숨어 있어요. 아래 단어를 하나씩 눌러서, 그림 어디를 가리키는지 직접 확인해 보세요.</p>
+    <div class="pill-row" id="term-row"></div>
+    <div class="figwrap"><svg id="fig-terms" class="figure" viewBox="0 0 480 330" aria-label="원의 용어 그림"></svg></div>
+    <div class="term-desc" id="term-desc">👆 위의 단어 버튼을 눌러 보세요.</div>
+    <div class="kbox gold" style="margin-top:14px">
+      ⚠️ <b>시험에 자주 나오는 헷갈림 두 쌍</b><br>
+      ① <b>현</b>은 원 위의 두 점을 잇는 <b>선분</b>, <b>할선</b>은 원과 두 점에서 만나는 <b>직선</b> — 이름도 비슷하고 그림도 비슷하지만 하나는 끝이 있고 하나는 끝없이 뻗어요.<br>
+      ② <b>부채꼴</b>은 두 반지름 + 호(부채 모양), <b>활꼴</b>은 현 + 호(활 모양). 경계선이 무엇인지를 보면 구분돼요.
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>원은 왜 360°일까?</h2><span class="sub">한 바퀴의 약속</span></div>
+  <div class="card">
+    <p>반지름이 원의 중심을 붙잡고 한 바퀴를 돌면, 그 회전의 크기를 우리는 <b>360°</b>라고 불러요. 버튼을 눌러 직접 돌려 보세요.</p>
+    <div class="figwrap"><svg id="fig-turn" class="figure" viewBox="0 0 480 300" aria-label="한 바퀴 회전 애니메이션"></svg></div>
+    <div class="ctrl-row">
+      <button class="btn" id="turn-play">▶ 한 바퀴 돌리기</button>
+      <div class="readout" id="turn-readout">지금까지 돈 각도: <b>0°</b></div>
+    </div>
+    <p style="margin-top:12px">그런데 왜 하필 360이라는 수일까요? 사실 이건 자연의 법칙이 아니라 <b>사람들의 오래된 약속</b>이에요. 약 4,000년 전 바빌로니아 사람들이 60진법을 쓰면서 한 바퀴를 360으로 나눴고, 360은 2, 3, 4, 5, 6, 8, 9, 10…으로 모두 딱 나누어떨어지는 아주 편리한 수라서 지금까지 살아남았어요.</p>
+    <div class="kbox">
+      💡 그래서 <b>중심각 x°</b>라는 말은 이렇게 읽을 수 있어요 — <b>“한 바퀴(360°) 중에서 x만큼을 차지한다.”</b> 즉 부채꼴이 원 전체에서 차지하는 몫은 <b class="serif">x/360</b>. 이 한 문장이 이번 단원 전체의 열쇠예요. 뒤에서 계속 다시 만나게 될 거예요.
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>확인 문제</h2><span class="sub">가볍게 체크</span></div>
+  <div id="checks-0"></div>
+  <div class="notes" id="notes-0"></div>
+</section>
+
+<!-- ============================================================ TAB 1 -->
+<section class="tabpanel" id="panel-1" role="tabpanel" aria-labelledby="tabbtn-1">
+
+  <div class="secbar"><span class="notch"></span><h2>실험 — 원을 굴려서 둘레를 펴 보자</h2><span class="sub">π의 발견</span></div>
+  <div class="card">
+    <p class="lede">원의 둘레(원주)는 구부러져 있어서 자로 잴 수 없어요. 그럼 어떻게 재냐고요? <b>굴리면 돼요.</b> 원이 한 바퀴 구르면, 둘레가 바닥에 그대로 펴져요.</p>
+    <div class="figwrap"><svg id="fig-roll" class="figure" viewBox="0 0 720 260" aria-label="원 굴리기 실험"></svg></div>
+    <div class="ctrl-row">
+      <button class="btn" id="roll-play">▶ 굴리기</button>
+      <button class="btn ghost sm" id="roll-reset">처음으로</button>
+      <label for="roll-r">원의 크기</label>
+      <input type="range" id="roll-r" min="34" max="58" value="46" step="4" aria-label="원의 크기 조절">
+    </div>
+    <div class="readout" id="roll-readout">굴러간 거리 = <b>0.00</b> × 지름</div>
+    <p style="margin-top:12px">원의 크기를 바꿔서 다시 굴려 보세요. 큰 원이든 작은 원이든, 한 바퀴 구르면 <b>언제나 지름의 약 3.14배</b>만큼 갑니다. 이 비율은 원의 크기와 상관없이 항상 같아요.</p>
+    <div class="kbox">
+      📏 이 “항상 같은 비율”에 이름을 붙인 것이 <b>원주율</b>이에요.<br>
+      <div class="formula">원주율 = 원주 ÷ 지름 = 3.141592…</div>
+      그래서 원주를 구하는 식은 외울 필요 없이 이 사실을 그대로 뒤집으면 돼요:
+      <div class="formula">원주 = 원주율 × 지름 = <span class="g">2πr</span></div>
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>π 연대기 — 인류는 이 수를 4,000년 동안 쫓았다</h2><span class="sub">역사 한 스푼</span></div>
+  <div class="card">
+    <p>“그 비율이 정확히 얼마인데?”라는 질문에 인류는 아주 오래 매달렸어요. 시대별 기록을 보세요.</p>
+    <div class="hist-strip">
+      <div class="hist-card"><div class="era">기원전 1900년경</div><div class="who">바빌로니아</div><div class="val">≈ 3.125</div><div class="note">점토판에 남은 계산. 꽤 훌륭한 근삿값!</div></div>
+      <div class="hist-card"><div class="era">기원전 1650년경</div><div class="who">이집트</div><div class="val">≈ 3.16</div><div class="note">린드 파피루스의 넓이 계산에서 역산한 값.</div></div>
+      <div class="hist-card"><div class="era">고대 문헌</div><div class="who">여러 기록</div><div class="val">그냥 3</div><div class="note">대충 3으로 쓴 기록도 많아요. 실용적으로는 통했지만….</div></div>
+      <div class="hist-card"><div class="era">기원전 250년경</div><div class="who">아르키메데스</div><div class="val">3.1408 ~ 3.1428</div><div class="note">계산이 아니라 <b>논리로 가둬서</b> 잡아냄. 아래에서 직접 해 봐요!</div></div>
+      <div class="hist-card"><div class="era">5세기</div><div class="who">조충지 (중국)</div><div class="val">355/113</div><div class="note">소수점 6자리까지 정확. 이후 약 900년간 세계 최고 기록.</div></div>
+      <div class="hist-card"><div class="era">오늘날</div><div class="who">컴퓨터</div><div class="val">수십조 자리</div><div class="note">그래도 끝은 안 나와요. 영원히.</div></div>
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>아르키메데스의 압박 작전</h2><span class="sub">π를 논리로 가두기</span></div>
+  <div class="card">
+    <p>아르키메데스의 아이디어는 이거였어요. <b>“원의 둘레는 못 재지만, 다각형의 둘레는 계산할 수 있잖아?”</b> 원 <b>안에</b> 꽉 차는 정다각형과 원 <b>밖에</b> 딱 붙는 정다각형을 그리면, 원주는 반드시 그 둘 사이에 있어야 해요. 변의 수를 늘려 보세요 — 포위망이 좁혀집니다.</p>
+    <div class="figwrap"><svg id="fig-arch" class="figure" viewBox="0 0 480 330" aria-label="아르키메데스 다각형 포위"></svg></div>
+    <div class="ctrl-row">
+      <label for="arch-n">변의 수</label>
+      <input type="range" id="arch-n" min="0" max="4" value="0" step="1" aria-label="다각형 변의 수">
+      <div class="readout" id="arch-nval">정<b>6</b>각형</div>
+    </div>
+    <div class="readout" id="arch-readout" style="text-align:center;font-size:16px;margin-top:8px"></div>
+    <p style="margin-top:12px">아르키메데스는 이 작업을 손으로 <b>정96각형</b>까지 해냈어요. 그렇게 얻은 결론이 <span class="serif"><b>3.1408 &lt; π &lt; 3.1428</b></span>. 컴퓨터도 소수점도 없던 시대에, 오직 논리만으로요.</p>
+    <div class="kbox gold">🔁 이 “조각을 늘릴수록 원에 가까워진다”는 작전, 기억해 두세요. <b>탭 2의 넓이 증명에서 똑같은 작전이 다시 나옵니다.</b></div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>그래서 π라는 글자를 쓰는 이유</h2><span class="sub">기호의 탄생</span></div>
+  <div class="card">
+    <p>사람들이 아무리 파고들어도 3.14159265358979… 는 <b>끝나지도 않고, 반복되지도 않는다</b>는 게 밝혀졌어요. 숫자로는 정확히 다 쓸 수가 없는 수인 거죠.</p>
+    <p>그래서 수학자들은 결단을 내렸어요. <b>“숫자로 못 쓰면, 이름을 붙이자.”</b> 둘레를 뜻하는 그리스어 페리메트로스(περίμετρος)의 첫 글자를 따서 — <span class="serif" style="font-size:20px;color:var(--indigo-900)"><b>π</b></span>.</p>
+    <div class="kbox">
+      ✍️ 초등학교에서는 3.14로 <b>어림해서</b> 계산했지만, 중학교부터 π를 그대로 쓰는 건 표기법이 바뀐 게 아니라 <b>더 정직해진 거예요.</b> 3.14는 근삿값이고, π가 그 수의 진짜 이름이니까요.
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>확인 문제</h2><span class="sub">계산 말고 논리로</span></div>
+  <div id="checks-1"></div>
+  <div class="notes" id="notes-1"></div>
+</section>
+
+<!-- ============================================================ TAB 2 -->
+<section class="tabpanel" id="panel-2" role="tabpanel" aria-labelledby="tabbtn-2">
+
+  <div class="secbar"><span class="notch"></span><h2>원의 넓이 — 조각내서 펴기</h2><span class="sub">πr²의 진짜 정체</span></div>
+  <div class="card">
+    <p class="lede">원의 넓이가 πr²라는 건 책마다 나오지만, <b>왜</b> 그런지는 잘 안 알려줘요. 비밀은 피자 자르기에 있어요. 원을 부채꼴 조각으로 자른 다음, 한 조각씩 위·아래로 번갈아 끼워서 나란히 세워 볼게요.</p>
+    <div class="ctrl-row">
+      <label for="slice-n">조각 수</label>
+      <input type="range" id="slice-n" min="0" max="3" value="0" step="1" aria-label="조각 수 조절">
+      <div class="readout" id="slice-nval"><b>8</b>조각</div>
+    </div>
+    <div class="figwrap"><svg id="fig-slice" class="figure" viewBox="0 0 720 420" aria-label="부채꼴 재배열 증명"></svg></div>
+    <p>조각 수를 늘려 보세요. 처음엔 울퉁불퉁하던 모양이 점점 <b>직사각형</b>으로 변해 가죠? 아르키메데스의 작전 그대로예요 — 조각이 많아질수록 어림이 아니라 진짜에 가까워집니다.</p>
+    <div class="kbox">
+      이 직사각형의 두 변을 읽어 봅시다.<br>
+      · <b>세로</b> = 조각의 길이 = 원의 반지름 <b class="serif">r</b><br>
+      · <b>가로</b> = 위쪽 곡선 절반 + 아래쪽 곡선 절반이 펴진 것 = <b>원주의 절반</b> = <b class="serif">2πr ÷ 2 = πr</b>
+      <div class="formula">원의 넓이 = 가로 × 세로 = πr × r = <span class="g">πr²</span></div>
+    </div>
+    <p class="small">💭 “조각을 무한히 잘게 하면 완벽한 직사각형이 된다” — 이런 식의 생각을 수학에서는 나중에 <b>극한</b>이라고 불러요. 여러분은 지금 고등학교 수학의 씨앗을 하나 미리 만난 거예요.</p>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>확인 문제</h2><span class="sub">이유를 말할 수 있는지</span></div>
+  <div id="checks-2"></div>
+  <div class="notes" id="notes-2"></div>
+</section>
+
+<!-- ============================================================ TAB 3 -->
+<section class="tabpanel" id="panel-3" role="tabpanel" aria-labelledby="tabbtn-3">
+
+  <div class="secbar"><span class="notch"></span><h2>핵심 질문 — 왜 중심각의 비 = 호의 비 = 넓이의 비일까?</h2><span class="sub">이 단원의 심장</span></div>
+  <div class="card">
+    <p class="lede">교과서는 “중심각의 크기에 정비례한다”라고 한 줄로 선언하고 넘어가요. 하지만 우리는 <b>왜 그럴 수밖에 없는지</b>를 두 가지 실험으로 직접 확인할 거예요.</p>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>실험 ① 합동 — 돌려서 겹쳐 보기</h2><span class="sub">이유의 뿌리</span></div>
+  <div class="card">
+    <p>같은 원 안에 <b>중심각이 똑같은</b> 부채꼴이 두 개 있어요. 파란 부채꼴을 슬라이더로 돌려서 노란 부채꼴 위로 옮겨 보세요.</p>
+    <div class="figwrap"><svg id="fig-cong" class="figure" viewBox="0 0 480 320" aria-label="합동 실험"></svg></div>
+    <div class="ctrl-row">
+      <label for="cong-t">돌리기</label>
+      <input type="range" id="cong-t" min="0" max="120" value="0" step="1" aria-label="파란 부채꼴 회전">
+      <div class="readout" id="cong-readout">회전: <b>0°</b></div>
+    </div>
+    <div class="kbox">
+      원은 어느 방향으로 돌려도 자기 자신과 똑같은 도형이에요. 그래서 같은 원에서 <b>중심각이 같으면 부채꼴은 완전히 포개져요(합동)</b>. 합동이면? <b>호의 길이도 같고, 넓이도 같을 수밖에</b> 없죠. 이게 모든 것의 출발점이에요.
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>실험 ② 도장 찍기 — 같은 조각을 쌓으면</h2><span class="sub">비례가 태어나는 순간</span></div>
+  <div class="card">
+    <p>중심각 30°짜리 부채꼴을 도장처럼 원에 찍어 볼게요. 한 번 찍을 때마다 표를 지켜보세요.</p>
+    <div class="figwrap"><svg id="fig-stamp" class="figure" viewBox="0 0 480 320" aria-label="도장 찍기 실험"></svg></div>
+    <div class="ctrl-row">
+      <button class="btn" id="stamp-add">🔨 30° 도장 찍기</button>
+      <button class="btn ghost sm" id="stamp-reset">지우기</button>
+    </div>
+    <div class="readout" id="stamp-readout" style="line-height:1.9">도장 <b>0</b>개</div>
+    <div class="kbox">
+      실험 ①에서 확인했듯 도장 찍은 조각들은 전부 <b>합동</b>이에요. 그러니 2개 찍으면 중심각도, 호도, 넓이도 정확히 <b>2배</b>. 3개면 <b>3배</b>. …비례라는 건 신비한 법칙이 아니라, <b>“똑같은 조각을 몇 개 쌓았는지 세는 일”</b>이었던 거예요.
+    </div>
+    <details class="deep">
+      <summary>🔍 더 깊이 — “30°처럼 딱 떨어지는 각만 되는 거 아냐?”</summary>
+      <p>좋은 의심이에요! 그래서 수학자들은 도장을 <b>1°짜리</b>로 바꿔요. 1° 부채꼴은 원 전체를 360개로 똑같이 나눈 조각이니, 호의 길이는 원주의 1/360, 넓이는 원 넓이의 1/360. 그럼 x° 부채꼴은 이 1° 조각을 x개 쌓은 것이니까 정확히 원주의 x/360, 넓이의 x/360이 돼요. 어떤 각도든요. (소수 각도가 궁금하면 도장을 0.1°로 더 잘게 쪼개면 되고요 — 어디서 본 작전이죠? 😉)</p>
+    </details>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>일반화 — 부채꼴은 원의 “몫”이다</h2><span class="sub">x/360</span></div>
+  <div class="card">
+    <p>이제 아무 각도나 골라 보세요. 부채꼴이 원 전체에서 차지하는 몫이 곧바로 보여요.</p>
+    <div class="figwrap"><svg id="fig-frac" class="figure" viewBox="0 0 480 300" aria-label="x/360 시각화"></svg></div>
+    <div class="ctrl-row">
+      <label for="frac-x">중심각 x°</label>
+      <input type="range" id="frac-x" min="10" max="350" value="90" step="10" aria-label="중심각 조절">
+      <div class="readout" id="frac-readout"></div>
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>공식 조립 — 부품은 이미 다 만들었다</h2><span class="sub">여기가 하이라이트</span></div>
+  <div class="card">
+    <p>이제 이 단원의 공식을 <b>외우는 게 아니라 조립</b>할 거예요. 부품은 전부 우리가 앞 탭에서 직접 만든 것들이에요. 버튼을 눌러 한 줄씩 조립해 보세요.</p>
+    <div class="derive" id="assembly"></div>
+    <div class="ctrl-row">
+      <button class="btn gold" id="assembly-next">다음 단계 ▶</button>
+      <button class="btn ghost sm" id="assembly-reset">처음부터</button>
+    </div>
+    <div class="kbox" style="margin-top:14px">
+      두 공식을 나란히 놓고 보세요. 구조가 완전히 똑같죠?
+      <div class="formula"><span class="hl2" style="background:var(--indigo-100);border-radius:4px;padding:0 4px">전체</span> × <span class="g">내 몫(x/360)</span></div>
+      호의 길이와 부채꼴의 넓이는 <b>서로 다른 두 공식이 아니라, 하나의 생각</b>이에요.
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>⚠️ 함정 주의 — 현은 따라오지 않는다</h2><span class="sub">시험 단골 O/X</span></div>
+  <div class="card">
+    <p>“그럼 현의 길이도 중심각에 비례하겠네?” — 시험이 노리는 함정이 바로 이거예요. 중심각을 2배로 만들어 보세요.</p>
+    <div class="figwrap"><svg id="fig-chord" class="figure" viewBox="0 0 720 300" aria-label="현은 비례하지 않음"></svg></div>
+    <div class="ctrl-row">
+      <button class="btn" id="chord-toggle">중심각 2배로! (40° → 80°)</button>
+    </div>
+    <div class="readout" id="chord-readout"></div>
+    <div class="kbox gold">
+      호는 원을 <b>따라 휘면서</b> 늘어나니까 조각을 쌓은 만큼 정확히 늘어나지만, 현은 <b>지름길로 질러가는 선분</b>이라 각이 커질수록 손해를 봐요. 그래서 <b>현의 길이는 중심각에 정비례하지 않아요.</b> (참고로 넓이 중에서도 활꼴의 넓이는 비례하지 않아요 — 현이 끼어 있으니까요.)
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>확인 문제</h2><span class="sub">비례 감각 점검</span></div>
+  <div id="checks-3"></div>
+  <div class="notes" id="notes-3"></div>
+</section>
+
+<!-- ============================================================ TAB 4 -->
+<section class="tabpanel" id="panel-4" role="tabpanel" aria-labelledby="tabbtn-4">
+
+  <div class="secbar"><span class="notch"></span><h2>지난 탭에서 우리가 조립한 것</h2><span class="sub">이제 도구로 쓰자</span></div>
+  <div class="card">
+    <div class="formula">호의 길이 <span class="serif">l</span> = 2πr × <span class="g">x/360</span> &nbsp;&nbsp;·&nbsp;&nbsp; 부채꼴의 넓이 <span class="serif">S</span> = πr² × <span class="g">x/360</span></div>
+    <p class="small" style="text-align:center">둘 다 「전체 × 내 몫」. 외운 게 아니라 탭 1·2·3에서 직접 만들었죠.</p>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>만져 보는 공식</h2><span class="sub">손잡이를 잡고 돌려 보세요</span></div>
+  <div class="card">
+    <p>원 위의 <b>금색 손잡이를 직접 드래그</b>하거나 슬라이더로 중심각을 바꿔 보세요. 호의 길이와 넓이가 어떻게 따라 움직이는지 관찰!</p>
+    <div class="figwrap"><svg id="fig-play" class="figure" viewBox="0 0 480 340" aria-label="중심각 조작 실험" style="touch-action:none"></svg></div>
+    <div class="ctrl-row">
+      <label for="play-r">반지름 r</label>
+      <input type="range" id="play-r" min="3" max="12" value="6" step="1" aria-label="반지름 조절">
+      <label for="play-x">중심각 x°</label>
+      <input type="range" id="play-x" min="5" max="355" value="60" step="5" aria-label="중심각 조절">
+    </div>
+    <div class="readout" id="play-readout" style="line-height:2"></div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>연습 문제</h2><span class="sub">③번은 종이에 쓰면서!</span></div>
+  <div id="checks-4"></div>
+  <div class="notes" id="notes-4"></div>
+</section>
+
+<!-- ============================================================ TAB 5 -->
+<section class="tabpanel" id="panel-5" role="tabpanel" aria-labelledby="tabbtn-5">
+
+  <div class="secbar"><span class="notch"></span><h2>보너스 공식 S = ½rl — 외울 필요가 없는 이유</h2><span class="sub">공식은 결론이다</span></div>
+  <div class="card">
+    <p class="lede">문제집에는 부채꼴 넓이 공식이 하나 더 나와요: <b class="serif">S = ½rl</b>. 새로운 공식 같지만, 사실은 우리가 이미 아는 두 식을 합치면 <b>저절로 굴러 나오는 결론</b>이에요. 한 줄씩 눌러 보세요.</p>
+    <div class="derive" id="derive5"></div>
+    <div class="ctrl-row">
+      <button class="btn gold" id="derive5-next">다음 단계 ▶</button>
+      <button class="btn ghost sm" id="derive5-reset">처음부터</button>
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>눈으로 보는 ½rl — 부채꼴은 사실 삼각형이다?</h2><span class="sub">직관 한 스푼</span></div>
+  <div class="card">
+    <p>탭 2에서 원을 잘게 잘라 폈던 것처럼, 부채꼴 하나도 아주 잘게 잘라서 펴면 <b>밑변이 호(l), 높이가 반지름(r)인 삼각형</b>과 거의 같아져요.</p>
+    <div class="figwrap"><svg id="fig-tri" class="figure" viewBox="0 0 720 280" aria-label="부채꼴과 삼각형 비교"></svg></div>
+    <div class="kbox">
+      삼각형의 넓이 = ½ × 밑변 × 높이 = <b class="serif">½ × l × r</b>. 공식의 ½이 어디서 왔는지, 이제 눈에 보이죠?
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>공식 갖고 놀기 — 등식의 성질로 뒤집기</h2><span class="sub">하나의 식, 세 벌의 옷</span></div>
+  <div class="card">
+    <p>문제는 가끔 넓이를 주고 호를 물어보거나, 넓이와 호를 주고 반지름을 물어봐요. 그때마다 새 공식을 외우는 게 아니라 — <b>양변에 똑같이 해 주기</b>(등식의 성질)로 S = ½rl을 그 자리에서 뒤집으면 돼요.</p>
+    <div class="ctrl-row">
+      <button class="btn" id="rearr-l">l 에 대해 풀기</button>
+      <button class="btn" id="rearr-r">r 에 대해 풀기</button>
+    </div>
+    <div class="derive" id="rearr-out"></div>
+    <div class="kbox gold" style="display:none" id="rearr-punch">
+      🎯 방금 한 것이 바로 <b>등식의 성질</b> — 일차방정식에서 쓰던 그 규칙 그대로예요. 도형 공식도 결국 등식이라서, 같은 문법이 통해요. <b>공식 세 개를 외운 게 아니라, 식 하나를 세 방향에서 입은 것뿐!</b>
+    </div>
+  </div>
+
+  <div class="secbar"><span class="notch"></span><h2>확인 문제</h2><span class="sub">뒤집기 실전</span></div>
+  <div id="checks-5"></div>
+  <div class="notes" id="notes-5"></div>
+
+  <div class="card" style="margin-top:24px;text-align:center;background:linear-gradient(135deg,var(--indigo-050),#fff)">
+    <p class="serif" style="font-size:18px;color:var(--indigo-900);font-weight:700">🎉 탐험 끝!</p>
+    <p style="font-size:14.5px">이 단원의 공식은 전부 <b>세 가지 사실</b>에서 나왔어요.<br>① 원주율은 항상 일정하다 &nbsp;② 조각을 늘리면 진짜에 가까워진다 &nbsp;③ 합동인 조각을 쌓으면 비례가 된다.<br>공식을 잊어버려도 괜찮아요 — <b>만드는 법을 아니까.</b></p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p class="serif">중1 수학 · 원과 부채꼴</p>
+    <p>모든 공식에는 이유가 있다 ✏️</p>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   helpers
+================================================================ */
+const $=s=>document.querySelector(s);
+const SVGNS="http://www.w3.org/2000/svg";
+function el(name,attrs={},parent=null,text=null){
+  const n=document.createElementNS(SVGNS,name);
+  for(const k in attrs)n.setAttribute(k,attrs[k]);
+  if(text!=null)n.textContent=text;
+  if(parent)parent.appendChild(n);
+  return n;
+}
+const D2R=Math.PI/180;
+function px(cx,cy,r,deg){return [cx+r*Math.cos(deg*D2R), cy-r*Math.sin(deg*D2R)];}
+function arcPath(cx,cy,r,a0,a1){ // CCW from a0 to a1 (deg, math convention)
+  const [x0,y0]=px(cx,cy,r,a0),[x1,y1]=px(cx,cy,r,a1);
+  const large=((a1-a0)%360+360)%360>180?1:0;
+  return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 0 ${x1} ${y1}`;
+}
+function sectorPath(cx,cy,r,a0,a1){
+  const [x0,y0]=px(cx,cy,r,a0),[x1,y1]=px(cx,cy,r,a1);
+  const large=((a1-a0)%360+360)%360>180?1:0;
+  return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 0 ${x1} ${y1} Z`;
+}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;}
+function frac(n,d){const g=gcd(n,d);return [n/g,d/g];}
+function piCoef(n,d){ // returns "kπ" or "nπ/d" for n/d * π
+  const [a,b]=frac(n,d);
+  if(a===0)return "0";
+  if(b===1)return (a===1?"":a)+"π";
+  return (a===1?"":a)+"π/"+b;
+}
+const C={ind9:"#312e81",ind7:"#4338ca",ind5:"#6366f1",ind1:"#e0e7ff",ind05:"#eef1ff",
+         gold:"#d4a017",gold7:"#a97b0a",goldS:"#f9efd4",ink:"#26244f",line:"#dcdaea",no:"#b91c1c",ok:"#15803d"};
+
+/* ---------------- storage (safe) ---------------- */
+const store={
+  get(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return this._m&&this._m[k]!==undefined?this._m[k]:fb;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){this._m=this._m||{};this._m[k]=v;}}
+};
+
+/* ================================================================
+   tabs + progress wheel
+================================================================ */
+const TABS=[
+  {no:0,label:"용어"},{no:1,label:"원주율 π"},{no:2,label:"원의 넓이"},
+  {no:3,label:"왜 비례?"},{no:4,label:"공식 연습"},{no:5,label:"S=½rl"}
+];
+let progress=store.get("circle_progress",{}); // {"0":{"q0":true,...},...}
+const tabbar=$("#tabbar");
+TABS.forEach(t=>{
+  const b=document.createElement("button");
+  b.className="tab-btn";b.id="tabbtn-"+t.no;b.setAttribute("role","tab");
+  b.innerHTML=`<span class="tno">${t.no}</span>${t.label}<span class="done">✓</span>`;
+  b.addEventListener("click",()=>showTab(t.no));
+  tabbar.appendChild(b);
+});
+function showTab(n){
+  document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  $("#panel-"+n).classList.add("active");
+  $("#tabbtn-"+n).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+  store.set("circle_lasttab",n);
+}
+function tabDone(n){
+  const need=CHECKS[n].items.length;
+  const got=progress[n]?Object.values(progress[n]).filter(Boolean).length:0;
+  return got>=need;
+}
+function drawWheel(){
+  const svg=$("#pw");svg.innerHTML="";
+  const cx=36,cy=36,r=26;
+  el("circle",{cx,cy,r,fill:"none",stroke:"rgba(255,255,255,.22)","stroke-width":11},svg);
+  for(let i=0;i<6;i++){
+    if(!tabDone(i))continue;
+    const a0=90-i*60, a1=90-(i+1)*60; // clockwise from top
+    const [x0,y0]=px(cx,cy,r,a0),[x1,y1]=px(cx,cy,r,a1);
+    el("path",{d:`M ${x0} ${y0} A ${r} ${r} 0 0 1 ${x1} ${y1}`,fill:"none",
+      stroke:"#f2cf6b","stroke-width":11,"stroke-linecap":"butt"},svg);
+  }
+  const doneN=[0,1,2,3,4,5].filter(tabDone).length;
+  el("text",{x:cx,y:cy+5,"text-anchor":"middle","font-size":"14","font-weight":"900",fill:"#fff"},svg,
+     doneN===6?"🎉":`${doneN*60}°`);
+  TABS.forEach(t=>{
+    $("#tabbtn-"+t.no).classList.toggle("is-done",tabDone(t.no));
+  });
+}
+
+/* ================================================================
+   TAB 0 — terms
+================================================================ */
+(function(){
+  const svg=$("#fig-terms");
+  const cx=200,cy=165,R=115;
+  // base circle
+  const layerHi=el("g",{},null); // will append after base
+  el("circle",{cx,cy,r:R,fill:"#fff",stroke:C.ind9,"stroke-width":2.5},svg);
+  svg.appendChild(layerHi);
+  // fixed points A(30°), B(110°) for arc/chord; secant through C(200°),Dp(320°)
+  const A=px(cx,cy,R,20), B=px(cx,cy,R,100);
+  const Cp=px(cx,cy,R,205), Dp=px(cx,cy,R,320);
+  // labels A,B
+  el("circle",{cx:A[0],cy:A[1],r:4,fill:C.ind9},svg);
+  el("circle",{cx:B[0],cy:B[1],r:4,fill:C.ind9},svg);
+  el("text",{x:A[0]+12,y:A[1]+4,"font-size":13,"font-weight":700,fill:C.ind9},svg,"A");
+  el("text",{x:B[0]-4,y:B[1]-10,"font-size":13,"font-weight":700,fill:C.ind9},svg,"B");
+  el("circle",{cx,cy,r:3.5,fill:C.ink},svg);
+  el("text",{x:cx+8,y:cy+16,"font-size":13,"font-weight":700,fill:C.ink},svg,"O");
+
+  const TERMS=[
+    {k:"중심",d:"원을 그릴 때 컴퍼스 바늘이 꽂혀 있던 점 <b>O</b>. 원 위의 모든 점에서 같은 거리에 있어요.",
+     draw(g){el("circle",{cx,cy,r:7,fill:"none",stroke:C.gold,"stroke-width":3},g);}},
+    {k:"반지름",d:"중심 O에서 원 위의 한 점까지 이은 선분. 기호로 <b>r</b>. 어느 방향으로 재도 길이가 같아요.",
+     draw(g){const P=px(cx,cy,R,60);el("line",{x1:cx,y1:cy,x2:P[0],y2:P[1],stroke:C.gold,"stroke-width":4},g);
+       el("text",{x:(cx+P[0])/2+8,y:(cy+P[1])/2,fill:C.gold7,"font-size":14,"font-weight":800},g,"r");}},
+    {k:"지름",d:"중심 O를 지나서 원 위의 두 점을 잇는 선분. 길이는 반지름의 2배(<b>2r</b>)이고, 원에서 가장 긴 현이에요.",
+     draw(g){const P=px(cx,cy,R,150),Q=px(cx,cy,R,330);el("line",{x1:P[0],y1:P[1],x2:Q[0],y2:Q[1],stroke:C.gold,"stroke-width":4},g);}},
+    {k:"호",d:"원 위의 두 점 A, B 사이의 <b>구부러진 곡선</b> 부분. 기호는 곡선 모자를 씌워 ⌢AB. 짧은 쪽·긴 쪽 두 개가 생겨요.",
+     draw(g){el("path",{d:arcPath(cx,cy,R,20,100),fill:"none",stroke:C.gold,"stroke-width":6,"stroke-linecap":"round"},g);}},
+    {k:"현",d:"원 위의 두 점 A, B를 <b>곧게</b> 이은 <b>선분</b>. 끝점이 있어요. (호가 등산로라면 현은 터널!)",
+     draw(g){el("line",{x1:A[0],y1:A[1],x2:B[0],y2:B[1],stroke:C.gold,"stroke-width":4},g);}},
+    {k:"할선",d:"원과 <b>두 점에서 만나며 끝없이 뻗는 직선</b>. 현과 달리 선분이 아니라 직선! 원을 ‘가르고 지나간다’고 해서 할(割)선.",
+     draw(g){
+       const dx=Dp[0]-Cp[0],dy=Dp[1]-Cp[1],L=Math.hypot(dx,dy);
+       const ux=dx/L,uy=dy/L,e=55;
+       el("line",{x1:Cp[0]-ux*e,y1:Cp[1]-uy*e,x2:Dp[0]+ux*e,y2:Dp[1]+uy*e,stroke:C.gold,"stroke-width":4},g);
+       el("text",{x:Dp[0]+ux*e+6,y:Dp[1]+uy*e,"font-size":12,fill:C.gold7,"font-weight":700},g,"…계속 뻗어요");}},
+    {k:"부채꼴",d:"<b>두 반지름과 호</b>로 둘러싸인 부분. 부채 모양! 두 반지름이 벌어진 각이 곧 중심각이에요.",
+     draw(g){el("path",{d:sectorPath(cx,cy,R,20,100),fill:"rgba(212,160,23,.35)",stroke:C.gold,"stroke-width":3},g);}},
+    {k:"활꼴",d:"<b>현과 호</b>로 둘러싸인 부분. 활(현=활시위, 호=활대) 모양! 반지름은 경계에 없다는 게 부채꼴과의 차이.",
+     draw(g){
+       el("path",{d:`${arcPath(cx,cy,R,20,100)} L ${A[0]} ${A[1]} Z`,fill:"rgba(67,56,202,.28)",stroke:C.ind7,"stroke-width":3},g);}},
+    {k:"중심각",d:"부채꼴에서 <b>두 반지름이 중심 O에서 벌린 각</b>. “한 바퀴 360° 중 얼마나 차지하는가”를 재는 눈금이에요.",
+     draw(g){el("path",{d:sectorPath(cx,cy,34,20,100),fill:"rgba(212,160,23,.5)"},g);
+       el("line",{x1:cx,y1:cy,x2:A[0],y2:A[1],stroke:C.ind9,"stroke-width":2.5},g);
+       el("line",{x1:cx,y1:cy,x2:B[0],y2:B[1],stroke:C.ind9,"stroke-width":2.5},g);
+       el("text",{x:cx+30,y:cy-32,"font-size":13,"font-weight":800,fill:C.gold7},g,"x°");}},
+  ];
+  const row=$("#term-row"),desc=$("#term-desc");
+  TERMS.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="term-btn";b.textContent=t.k;
+    b.addEventListener("click",()=>{
+      row.querySelectorAll(".term-btn").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      layerHi.innerHTML="";t.draw(layerHi);
+      desc.innerHTML=`<b>${t.k}</b> — ${t.d}`;
+    });
+    row.appendChild(b);
+  });
+})();
+
+/* ---------------- TAB 0 — full turn ---------------- */
+(function(){
+  const svg=$("#fig-turn"),cx=240,cy=155,R=100;
+  el("circle",{cx,cy,r:R,fill:"#fff",stroke:C.line,"stroke-width":2},svg);
+  const trail=el("path",{d:"",fill:"rgba(212,160,23,.25)"},svg);
+  el("line",{x1:cx,y1:cy,x2:cx+R,y2:cy,stroke:C.line,"stroke-width":2,"stroke-dasharray":"4 4"},svg);
+  const arm=el("line",{x1:cx,y1:cy,x2:cx+R,y2:cy,stroke:C.ind7,"stroke-width":4,"stroke-linecap":"round"},svg);
+  el("circle",{cx,cy,r:4,fill:C.ind9},svg);
+  const lab=el("text",{x:cx,y:cy-R-14,"text-anchor":"middle","font-size":16,"font-weight":900,fill:C.ind9},svg,"0°");
+  let anim=null;
+  $("#turn-play").addEventListener("click",()=>{
+    if(anim)cancelAnimationFrame(anim);
+    const t0=performance.now(),DUR=2600;
+    function step(t){
+      let k=Math.min(1,(t-t0)/DUR);
+      k=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; // easeInOut
+      const a=360*k;
+      const P=px(cx,cy,R,-a); // clockwise sweep
+      arm.setAttribute("x2",P[0]);arm.setAttribute("y2",P[1]);
+      if(a>0&&a<360)trail.setAttribute("d",sectorPath(cx,cy,R,-a,0));
+      else if(a>=360)trail.setAttribute("d",`M ${cx-R} ${cy} A ${R} ${R} 0 1 0 ${cx+R} ${cy} A ${R} ${R} 0 1 0 ${cx-R} ${cy}`);
+      lab.textContent=Math.round(a)+"°";
+      $("#turn-readout").innerHTML=`지금까지 돈 각도: <b>${Math.round(a)}°</b>`+(a>=360?" — 한 바퀴 완성! 🎉":"");
+      if(k<1)anim=requestAnimationFrame(step);
+    }
+    anim=requestAnimationFrame(step);
+  });
+})();
+
+/* ================================================================
+   TAB 1 — rolling circle
+================================================================ */
+(function(){
+  const svg=$("#fig-roll");
+  const GY=190, X0=70;
+  let r=46, phi=0, anim=null;
+  function draw(){
+    svg.innerHTML="";
+    const d=2*r;
+    // ground + ruler
+    el("line",{x1:20,y1:GY,x2:700,y2:GY,stroke:C.ink,"stroke-width":2},svg);
+    for(let k=0;k<=3;k++){
+      const x=X0+k*d;
+      if(x>690)continue;
+      el("line",{x1:x,y1:GY,x2:x,y2:GY+10,stroke:C.ink,"stroke-width":2},svg);
+      el("text",{x,y:GY+28,"text-anchor":"middle","font-size":12,fill:"#5a5880","font-weight":600},svg,
+        k===0?"출발":`지름×${k}`);
+    }
+    const xpi=X0+Math.PI*d;
+    if(xpi<695){
+      el("line",{x1:xpi,y1:GY,x2:xpi,y2:GY+14,stroke:C.gold,"stroke-width":3},svg);
+      el("text",{x:xpi,y:GY+30,"text-anchor":"middle","font-size":12.5,fill:C.gold7,"font-weight":900},svg,"3.14…");
+    }
+    // unrolled trace
+    const dist=r*phi;
+    el("line",{x1:X0,y1:GY-3,x2:X0+dist,y2:GY-3,stroke:C.gold,"stroke-width":6,"stroke-linecap":"round"},svg);
+    // circle
+    const ccx=X0+dist, ccy=GY-r;
+    el("circle",{cx:ccx,cy:ccy,r,fill:"rgba(224,231,255,.6)",stroke:C.ind7,"stroke-width":3},svg);
+    // remaining rim (not yet unrolled) highlighted
+    if(phi<2*Math.PI-0.01){
+      // rim point for material angle t (0..2π from start contact): after rolling phi,
+      // material point t sits at angle -90+(t-phi) deg — leading side is right of bottom.
+      const steps=40;
+      let dd="";
+      for(let i=0;i<=steps;i++){
+        const t=phi+(2*Math.PI-phi)*i/steps; // material angles not yet unrolled
+        const ang=-90+((t-phi)*180/Math.PI);
+        const P=px(ccx,ccy,r,ang);
+        dd+=(i===0?"M ":"L ")+P[0].toFixed(1)+" "+P[1].toFixed(1)+" ";
+      }
+      el("path",{d:dd,fill:"none",stroke:C.gold,"stroke-width":5,"stroke-linecap":"round"},svg);
+    }
+    // marker dot (cycloid) — material point t=0
+    const mx=ccx+r*Math.sin(-phi), my=ccy+r*Math.cos(phi);
+    el("circle",{cx:mx,cy:my,r:6,fill:C.ind9},svg);
+    el("line",{x1:ccx,y1:ccy,x2:mx,y2:my,stroke:C.ind9,"stroke-width":2,"stroke-dasharray":"3 3"},svg);
+    el("circle",{cx:ccx,cy:ccy,r:3,fill:C.ind7},svg);
+    // label
+    el("text",{x:ccx,y:ccy-r-12,"text-anchor":"middle","font-size":12.5,"font-weight":700,fill:C.ind9},svg,"데굴데굴");
+    $("#roll-readout").innerHTML=`굴러간 거리 = <b>${(dist/d).toFixed(2)}</b> × 지름`+
+      (phi>=2*Math.PI-0.01?` &nbsp;→&nbsp; <span class="g" style="color:${C.gold7}">한 바퀴 = 3.14… 개의 지름! 이게 π예요</span>`:"");
+  }
+  function play(){
+    if(anim)cancelAnimationFrame(anim);
+    phi=0;
+    const t0=performance.now(),DUR=3800;
+    function step(t){
+      let k=Math.min(1,(t-t0)/DUR);
+      k=1-Math.pow(1-k,2);
+      phi=2*Math.PI*k;
+      draw();
+      if(k<1)anim=requestAnimationFrame(step);
+    }
+    anim=requestAnimationFrame(step);
+  }
+  $("#roll-play").addEventListener("click",play);
+  $("#roll-reset").addEventListener("click",()=>{if(anim)cancelAnimationFrame(anim);phi=0;draw();});
+  $("#roll-r").addEventListener("input",e=>{if(anim)cancelAnimationFrame(anim);r=+e.target.value;phi=0;draw();});
+  draw();
+})();
+
+/* ---------------- TAB 1 — Archimedes ---------------- */
+(function(){
+  const svg=$("#fig-arch"),cx=240,cy=160,R=118;
+  const NS=[6,12,24,48,96];
+  function poly(n,rad,rot){
+    let d="";
+    for(let i=0;i<n;i++){
+      const a=rot+360*i/n;
+      const P=px(cx,cy,rad,a);
+      d+=(i===0?"M ":"L ")+P[0].toFixed(2)+" "+P[1].toFixed(2)+" ";
+    }
+    return d+"Z";
+  }
+  function draw(idx){
+    const n=NS[idx];
+    svg.innerHTML="";
+    // circumscribed
+    el("path",{d:poly(n,R/Math.cos(Math.PI/n),90+180/n),fill:"rgba(212,160,23,.13)",stroke:C.gold,"stroke-width":2.5},svg);
+    // circle
+    el("circle",{cx,cy,r:R,fill:"none",stroke:C.ink,"stroke-width":3},svg);
+    // inscribed
+    el("path",{d:poly(n,R,90),fill:"rgba(67,56,202,.14)",stroke:C.ind7,"stroke-width":2.5},svg);
+    el("text",{x:cx,y:36,"text-anchor":"middle","font-size":13,"font-weight":700,fill:C.gold7},svg,"바깥 다각형 (원보다 김)");
+    el("text",{x:cx,y:cy+6,"text-anchor":"middle","font-size":13,"font-weight":700,fill:C.ind9},svg,"안쪽 다각형 (원보다 짧음)");
+    const lo=n*Math.sin(Math.PI/n), hi=n*Math.tan(Math.PI/n);
+    $("#arch-nval").innerHTML=`정<b>${n}</b>각형`;
+    $("#arch-readout").innerHTML=
+      `<span style="color:${C.ind9}">${lo.toFixed(4)}</span> &nbsp;&lt;&nbsp; <b style="font-size:19px">π</b> &nbsp;&lt;&nbsp; <span style="color:${C.gold7}">${hi.toFixed(4)}</span>`
+      +(n===96?`<br><span style="font-size:12.5px;font-weight:500">← 아르키메데스가 도달한 바로 그 지점!</span>`:"");
+  }
+  $("#arch-n").addEventListener("input",e=>draw(+e.target.value));
+  draw(0);
+})();
+</script>
+
+<script>
+/* ================================================================
+   TAB 2 — slice & rearrange
+================================================================ */
+(function(){
+  const svg=$("#fig-slice");
+  const NS=[8,16,32,64];
+  const R=95, ccx=130, ccy=115;
+  function sampledSector(ax,ay,R,half,up){ // apex at (ax,ay); arc bulges up? (up=true → arc above apex)
+    const sgn=up?-1:1;
+    let d=`M ${ax} ${ay} `;
+    const STEPS=22;
+    for(let i=0;i<=STEPS;i++){
+      const u=-half+(2*half)*i/STEPS; // radians
+      const x=ax+R*Math.sin(u), y=ay+sgn*R*Math.cos(u);
+      d+=`L ${x.toFixed(2)} ${y.toFixed(2)} `;
+    }
+    return d+"Z";
+  }
+  function draw(idx){
+    const n=NS[idx];
+    svg.innerHTML="";
+    $("#slice-nval").innerHTML=`<b>${n}</b>조각`;
+    const th=360/n;
+    // source circle with sectors
+    for(let k=0;k<n;k++){
+      el("path",{d:sectorPath(ccx,ccy,R,k*th,(k+1)*th),
+        fill:k%2?"rgba(212,160,23,.32)":"rgba(67,56,202,.22)",
+        stroke:C.ind9,"stroke-width":n>32?.6:1},svg);
+    }
+    el("text",{x:ccx,y:ccy+R+26,"text-anchor":"middle","font-size":13,"font-weight":700,fill:C.ink},svg,"이걸 잘라서 →");
+    // arrow
+    el("path",{d:`M ${ccx+R+40} ${ccy} l 46 0 m -12 -9 l 12 9 l -12 9`,fill:"none",stroke:C.gold,"stroke-width":3.5,"stroke-linecap":"round","stroke-linejoin":"round"},svg);
+    // rearranged row
+    const half=(th/2)*D2R;
+    const w=2*R*Math.sin(half);
+    const X0=48, yTop=252;
+    const c=R*Math.cos(half);
+    for(let i=0;i<n;i++){
+      const ax=X0+w/2+i*w/2;
+      const down=(i%2===0); // even: apex on top line, arc below; odd: apex at yTop+c, arc up
+      const d=down
+        ? sampledSector(ax,yTop,R,half,false)
+        : sampledSector(ax,yTop+c,R,half,true);
+      el("path",{d,fill:i%2?"rgba(212,160,23,.32)":"rgba(67,56,202,.22)",
+        stroke:C.ind9,"stroke-width":n>32?.6:1},svg);
+    }
+    const totalW=(n+1)*w/2;
+    // dimension labels
+    const yB=yTop+R;
+    el("path",{d:`M ${X0} ${yB+16} L ${X0+totalW} ${yB+16}`,stroke:C.gold7,"stroke-width":2},svg);
+    el("line",{x1:X0,y1:yB+10,x2:X0,y2:yB+22,stroke:C.gold7,"stroke-width":2},svg);
+    el("line",{x1:X0+totalW,y1:yB+10,x2:X0+totalW,y2:yB+22,stroke:C.gold7,"stroke-width":2},svg);
+    el("text",{x:X0+totalW/2,y:yB+36,"text-anchor":"middle","font-size":13.5,"font-weight":800,fill:C.gold7},svg,
+      n>=32?"가로 = πr (원주의 절반)":"가로 ≈ πr (원주의 절반)");
+    el("line",{x1:X0+totalW+14,y1:yTop,x2:X0+totalW+14,y2:yTop+R,stroke:C.ind7,"stroke-width":2},svg);
+    el("text",{x:X0+totalW+22,y:yTop+R/2+5,"font-size":13.5,"font-weight":800,fill:C.ind7},svg,"r");
+    el("text",{x:X0+totalW,y:yTop-14,"text-anchor":"end","font-size":13,"font-weight":700,fill:C.ink},svg,
+      n>=64?"거의 완벽한 직사각형!":"위·아래로 번갈아 끼우면…");
+  }
+  $("#slice-n").addEventListener("input",e=>draw(+e.target.value));
+  draw(0);
+})();
+
+/* ================================================================
+   TAB 3 — congruence
+================================================================ */
+(function(){
+  const svg=$("#fig-cong"),cx=240,cy=170,R=118;
+  function draw(t){
+    svg.innerHTML="";
+    el("circle",{cx,cy,r:R,fill:"#fff",stroke:C.line,"stroke-width":2},svg);
+    el("circle",{cx,cy,r:3.5,fill:C.ink},svg);
+    // target B: [150,210]
+    el("path",{d:sectorPath(cx,cy,R,150,210),fill:"rgba(212,160,23,.4)",stroke:C.gold,"stroke-width":2.5},svg);
+    el("text",{x:px(cx,cy,R*.62,180)[0],y:px(cx,cy,R*.62,180)[1]+5,"text-anchor":"middle","font-size":12.5,"font-weight":800,fill:C.gold7},svg,"60°");
+    // moving A: [30+t, 90+t]
+    const done=t>=120;
+    el("path",{d:sectorPath(cx,cy,R,30+t,90+t),
+      fill:done?"rgba(21,128,61,.45)":"rgba(67,56,202,.42)",
+      stroke:done?C.ok:C.ind7,"stroke-width":2.5},svg);
+    const M=px(cx,cy,R*.62,60+t);
+    el("text",{x:M[0],y:M[1]+5,"text-anchor":"middle","font-size":12.5,"font-weight":800,fill:done?C.ok:"#fff"},svg,"60°");
+    if(done){
+      el("text",{x:cx,y:44,"text-anchor":"middle","font-size":17,"font-weight":900,fill:C.ok},svg,"완전히 포개졌다 → 합동! ✅");
+    }
+    $("#cong-readout").innerHTML=`회전: <b>${t}°</b>`+(done?` — <span style="color:${C.ok}">호도, 넓이도 같을 수밖에!</span>`:"");
+  }
+  $("#cong-t").addEventListener("input",e=>draw(+e.target.value));
+  draw(0);
+})();
+
+/* ---------------- TAB 3 — stamping ---------------- */
+(function(){
+  const svg=$("#fig-stamp"),cx=240,cy=170,R=118;
+  let n=0;
+  function draw(){
+    svg.innerHTML="";
+    el("circle",{cx,cy,r:R,fill:"#fff",stroke:C.line,"stroke-width":2},svg);
+    for(let k=1;k<=n;k++){
+      el("path",{d:sectorPath(cx,cy,R,90-30*k,90-30*(k-1)),
+        fill:k%2?"rgba(212,160,23,.42)":"rgba(212,160,23,.22)",
+        stroke:C.gold7,"stroke-width":1.5},svg);
+    }
+    el("circle",{cx,cy,r:3.5,fill:C.ink},svg);
+    const readout=$("#stamp-readout");
+    if(n===0){readout.innerHTML="도장 <b>0</b>개 — 버튼을 눌러 보세요!";}
+    else{
+      const full=n===12;
+      readout.innerHTML=
+        `도장 <b>${n}</b>개 &nbsp;→&nbsp; 중심각 <b>${30*n}°</b> = 30°의 <b class="g">${n}배</b><br>`+
+        `호의 길이 = (30° 호) × <b class="g">${n}</b> &nbsp;·&nbsp; 넓이 = (30° 넓이) × <b class="g">${n}</b>`+
+        (full?`<br><span style="color:${C.gold7};font-weight:800">한 바퀴 완성! 360° = 원 전체 🎉</span>`:"");
+    }
+  }
+  $("#stamp-add").addEventListener("click",()=>{if(n<12){n++;draw();}});
+  $("#stamp-reset").addEventListener("click",()=>{n=0;draw();});
+  draw();
+})();
+
+/* ---------------- TAB 3 — fraction ---------------- */
+(function(){
+  const svg=$("#fig-frac"),cx=155,cy=150,R=105;
+  function draw(x){
+    svg.innerHTML="";
+    el("circle",{cx,cy,r:R,fill:"#eef1ff",stroke:C.line,"stroke-width":2},svg);
+    el("path",{d:sectorPath(cx,cy,R,90-x,90),fill:"rgba(212,160,23,.55)",stroke:C.gold7,"stroke-width":2},svg);
+    el("circle",{cx,cy,r:3.5,fill:C.ink},svg);
+    const [a,b]=frac(x,360);
+    el("text",{x:340,y:120,"font-size":15,"font-weight":700,fill:C.ink,"text-anchor":"middle"},svg,`중심각 ${x}°`);
+    el("text",{x:340,y:160,"font-size":22,"font-weight":900,fill:C.gold7,"text-anchor":"middle"},svg,`${x}/360 = ${a}/${b}`);
+    el("text",{x:340,y:192,"font-size":13.5,"font-weight":600,fill:"#5a5880","text-anchor":"middle"},svg,`→ 원 전체의 ${a}/${b}`);
+    $("#frac-readout").innerHTML=`호도 원주의 <b class="g">${a}/${b}</b>, 넓이도 원 넓이의 <b class="g">${a}/${b}</b>`;
+  }
+  $("#frac-x").addEventListener("input",e=>draw(+e.target.value));
+  draw(90);
+})();
+
+/* ---------------- TAB 3 — formula assembly ---------------- */
+const ASSEMBLY_LINES=[
+  {b:"탭 1에서",g:0,m:`원 전체의 호(= 원주) = <span class="hl2">2πr</span>`,n:"이게 「전체」 부품."},
+  {b:"방금 증명",g:1,m:`x° 부채꼴의 호는 원주의 <span class="hl">x/360</span> 배`,n:"도장 찍기 실험의 결론 — 「내 몫」 부품."},
+  {b:"조립 완성",g:1,m:`호의 길이 l = <span class="hl2">2πr</span> × <span class="hl">x/360</span>`,n:"전체 × 내 몫. 외운 게 아니라 조립했다!"},
+  {b:"탭 2에서",g:0,m:`원 전체의 넓이 = <span class="hl2">πr²</span>`,n:"피자 재배열로 직접 만든 부품."},
+  {b:"같은 논리",g:1,m:`부채꼴의 넓이 S = <span class="hl2">πr²</span> × <span class="hl">x/360</span>`,n:"똑같은 뼈대에 「전체」만 갈아 끼우면 끝."},
+];
+function buildStepper(containerId,nextId,resetId,lines){
+  const box=$(containerId);
+  let step=0;
+  function render(){
+    box.innerHTML="";
+    lines.forEach((L,i)=>{
+      const d=document.createElement("div");
+      d.className="dline"+(i<step?" shown":"")+(i===step-1?" hot":"");
+      d.innerHTML=`<span class="badge ${L.g?'g':''}">${L.b}</span><div><div class="dmath">${L.m}</div><div class="dnote">${L.n}</div></div>`;
+      box.appendChild(d);
+    });
+    $(nextId).textContent=step>=lines.length?"조립 완료 ✅":"다음 단계 ▶";
+  }
+  $(nextId).addEventListener("click",()=>{if(step<lines.length){step++;render();}});
+  $(resetId).addEventListener("click",()=>{step=0;render();});
+  render();
+}
+buildStepper("#assembly","#assembly-next","#assembly-reset",ASSEMBLY_LINES);
+
+/* ---------------- TAB 3 — chord trap ---------------- */
+(function(){
+  const svg=$("#fig-chord");
+  let doubled=false;
+  function circleFig(cx,cy,R,x,title){
+    el("circle",{cx,cy,r:R,fill:"#fff",stroke:C.line,"stroke-width":2},svg);
+    el("path",{d:sectorPath(cx,cy,R,90-x,90),fill:"rgba(224,231,255,.7)",stroke:"none"},svg);
+    el("path",{d:arcPath(cx,cy,R,90-x,90),fill:"none",stroke:C.ind7,"stroke-width":5,"stroke-linecap":"round"},svg);
+    const P=px(cx,cy,R,90),Q=px(cx,cy,R,90-x);
+    el("line",{x1:P[0],y1:P[1],x2:Q[0],y2:Q[1],stroke:C.gold7,"stroke-width":4},svg);
+    el("circle",{cx,cy,r:3,fill:C.ink},svg);
+    el("text",{x:cx,y:cy+R+30,"text-anchor":"middle","font-size":14,"font-weight":800,fill:C.ink},svg,title);
+  }
+  function draw(){
+    svg.innerHTML="";
+    const R=92;
+    circleFig(160,128,R,40,"중심각 40°");
+    const x2=doubled?80:40;
+    circleFig(520,128,R,x2,doubled?"중심각 80° (2배)":"중심각 40° (아직 그대로)");
+    el("path",{d:"M 300 120 l 80 0 m -14 -9 l 14 9 l -14 9",fill:"none",stroke:C.gold,"stroke-width":3.5,"stroke-linecap":"round","stroke-linejoin":"round"},svg);
+    el("text",{x:340,y:104,"text-anchor":"middle","font-size":12.5,"font-weight":700,fill:C.gold7},svg,doubled?"각 2배!":"눌러 보세요");
+    // legend
+    el("line",{x1:250,y1:262,x2:280,y2:262,stroke:C.ind7,"stroke-width":5,"stroke-linecap":"round"},svg);
+    el("text",{x:286,y:266,"font-size":13,fill:C.ink,"font-weight":600},svg,"호");
+    el("line",{x1:340,y1:262,x2:370,y2:262,stroke:C.gold7,"stroke-width":4},svg);
+    el("text",{x:376,y:266,"font-size":13,fill:C.ink,"font-weight":600},svg,"현");
+    const chordRatio=(Math.sin(40*D2R)/Math.sin(20*D2R));
+    $("#chord-readout").innerHTML=doubled
+      ? `호의 길이: <b style="color:${C.ok}">정확히 2.00배 ⭕ (정비례)</b> &nbsp;·&nbsp; 현의 길이: <b style="color:${C.no}">약 ${chordRatio.toFixed(2)}배 ❌ (2배가 아니다!)</b>`
+      : `지금 두 원의 호와 현은 완전히 같아요. 중심각을 2배로 만들면 어떻게 될까요?`;
+    $("#chord-toggle").textContent=doubled?"다시 40°로":"중심각 2배로! (40° → 80°)";
+  }
+  $("#chord-toggle").addEventListener("click",()=>{doubled=!doubled;draw();});
+  draw();
+})();
+</script>
+
+<script>
+/* ================================================================
+   TAB 4 — touch the formula
+================================================================ */
+(function(){
+  const svg=$("#fig-play"),cx=200,cy=175,Rp=125;
+  let r=6,x=60,dragging=false;
+  function draw(){
+    svg.innerHTML="";
+    el("circle",{cx,cy,r:Rp,fill:"#fff",stroke:C.line,"stroke-width":2},svg);
+    el("path",{d:sectorPath(cx,cy,Rp,0,x),fill:"rgba(67,56,202,.22)"},svg);
+    el("path",{d:arcPath(cx,cy,Rp,0,x),fill:"none",stroke:C.ind7,"stroke-width":5,"stroke-linecap":"round"},svg);
+    el("line",{x1:cx,y1:cy,x2:cx+Rp,y2:cy,stroke:C.ind9,"stroke-width":2.5},svg);
+    const H=px(cx,cy,Rp,x);
+    el("line",{x1:cx,y1:cy,x2:H[0],y2:H[1],stroke:C.ind9,"stroke-width":2.5},svg);
+    el("path",{d:arcPath(cx,cy,30,0,Math.min(x,359)),fill:"none",stroke:C.gold7,"stroke-width":2.5},svg);
+    const M=px(cx,cy,52,x/2);
+    el("text",{x:M[0],y:M[1]+5,"text-anchor":"middle","font-size":14,"font-weight":900,fill:C.gold7},svg,x+"°");
+    el("circle",{cx,cy,r:3.5,fill:C.ink},svg);
+    // handle
+    el("circle",{cx:H[0],cy:H[1],r:16,fill:"rgba(212,160,23,.25)"},svg);
+    el("circle",{cx:H[0],cy:H[1],r:10,fill:C.gold,stroke:"#fff","stroke-width":2.5,style:"cursor:grab"},svg);
+    // r label
+    el("text",{x:cx+Rp+14,y:cy+5,"font-size":13.5,"font-weight":800,fill:C.ind9},svg,"r = "+r);
+    const [fa,fb]=frac(x,360);
+    const l=piCoef(2*r*x,360), S=piCoef(r*r*x,360);
+    $("#play-readout").innerHTML=
+      `내 몫: <b class="g">${x}/360 = ${fa}/${fb}</b><br>`+
+      `호의 길이 l = 2π×${r} × ${fa}/${fb} = <b class="g">${l}</b><br>`+
+      `넓이 S = π×${r}² × ${fa}/${fb} = <b class="g">${S}</b>`;
+    $("#play-x").value=x;
+  }
+  function setFromPointer(ev){
+    const rect=svg.getBoundingClientRect();
+    const vx=(ev.clientX-rect.left)/rect.width*480;
+    const vy=(ev.clientY-rect.top)/rect.height*340;
+    let a=Math.atan2(-(vy-cy),vx-cx)/D2R;
+    a=((a%360)+360)%360;
+    a=Math.round(a/5)*5;
+    a=Math.max(5,Math.min(355,a));
+    x=a;draw();
+  }
+  svg.addEventListener("pointerdown",ev=>{dragging=true;svg.setPointerCapture(ev.pointerId);setFromPointer(ev);});
+  svg.addEventListener("pointermove",ev=>{if(dragging)setFromPointer(ev);});
+  svg.addEventListener("pointerup",()=>dragging=false);
+  svg.addEventListener("pointercancel",()=>dragging=false);
+  $("#play-r").addEventListener("input",e=>{r=+e.target.value;draw();});
+  $("#play-x").addEventListener("input",e=>{x=+e.target.value;draw();});
+  draw();
+})();
+
+/* ================================================================
+   TAB 5 — derive S=½rl
+================================================================ */
+const DERIVE5_LINES=[
+  {b:"탭 3에서",g:0,m:`S = πr² × x/360`,n:"우리가 조립한 넓이 공식에서 출발."},
+  {b:"모양 바꾸기",g:1,m:`S = ½ × r × (<span class="hl">2πr × x/360</span>)`,n:"값은 그대로! ½×2 = 1이고 r×r = r²이니까, 풀어서 다시 묶었을 뿐."},
+  {b:"어라?",g:1,m:`괄호 속 <span class="hl">2πr × x/360</span> … 어디서 봤죠? 바로 호의 길이 <b>l</b>!`,n:"탭 3에서 조립한 첫 번째 공식."},
+  {b:"결론",g:1,m:`S = ½ × r × l = <span class="hl2">½rl</span>`,n:"x/360이 l 속으로 숨었다! 그래서 중심각을 몰라도, 호와 반지름만 알면 넓이가 나와요."},
+];
+buildStepper("#derive5","#derive5-next","#derive5-reset",DERIVE5_LINES);
+
+/* ---------------- TAB 5 — sector vs triangle ---------------- */
+(function(){
+  const svg=$("#fig-tri");
+  const R=150, half=35*D2R;
+  const ax=170,ay=225;
+  // sector pointing up
+  let d=`M ${ax} ${ay} `;
+  for(let i=0;i<=30;i++){
+    const u=-half+2*half*i/30;
+    d+=`L ${(ax+R*Math.sin(u)).toFixed(1)} ${(ay-R*Math.cos(u)).toFixed(1)} `;
+  }
+  el("path",{d:d+"Z",fill:"rgba(67,56,202,.18)",stroke:C.ind7,"stroke-width":2.5},svg);
+  el("text",{x:ax,y:ay-R-14,"text-anchor":"middle","font-size":13.5,"font-weight":800,fill:C.ind7},svg,"호 l (구부러진 밑변)");
+  el("text",{x:ax-8,y:ay-52,"text-anchor":"end","font-size":13.5,"font-weight":800,fill:C.ink},svg,"r");
+  el("text",{x:ax,y:ay+26,"text-anchor":"middle","font-size":13.5,"font-weight":700,fill:C.ink},svg,"부채꼴");
+  // arrow
+  el("path",{d:"M 320 130 l 70 0 m -13 -9 l 13 9 l -13 9",fill:"none",stroke:C.gold,"stroke-width":3.5,"stroke-linecap":"round","stroke-linejoin":"round"},svg);
+  el("text",{x:355,y:112,"text-anchor":"middle","font-size":12.5,"font-weight":700,fill:C.gold7},svg,"잘게 잘라 펴면");
+  // triangle: base = arc length
+  const L=R*2*half; // ≈183
+  const tx=440,ty=225;
+  el("path",{d:`M ${tx} ${ty} L ${tx+L} ${ty} L ${tx+L/2} ${ty-R} Z`,fill:"rgba(212,160,23,.2)",stroke:C.gold7,"stroke-width":2.5},svg);
+  el("line",{x1:tx+L/2,y1:ty,x2:tx+L/2,y2:ty-R,stroke:C.ind9,"stroke-width":2,"stroke-dasharray":"5 4"},svg);
+  el("text",{x:tx+L/2,y:ty+22,"text-anchor":"middle","font-size":13.5,"font-weight":800,fill:C.gold7},svg,"밑변 = l (곧게 펴짐)");
+  el("text",{x:tx+L/2+10,y:ty-R/2,"font-size":13.5,"font-weight":800,fill:C.ind9},svg,"높이 = r");
+  el("text",{x:tx+L/2,y:ty+44,"text-anchor":"middle","font-size":13.5,"font-weight":700,fill:C.ink},svg,"넓이 = ½ × l × r");
+})();
+
+/* ---------------- TAB 5 — rearrangement play ---------------- */
+(function(){
+  const out=$("#rearr-out");
+  function show(lines){
+    out.innerHTML="";
+    lines.forEach((L,i)=>{
+      const d=document.createElement("div");
+      d.className="dline shown"+(i===lines.length-1?" hot":"");
+      d.innerHTML=`<span class="badge ${L.g?'g':''}">${L.b}</span><div><div class="dmath">${L.m}</div>${L.n?`<div class="dnote">${L.n}</div>`:""}</div>`;
+      out.appendChild(d);
+    });
+    $("#rearr-punch").style.display="block";
+  }
+  $("#rearr-l").addEventListener("click",()=>show([
+    {b:"시작",g:0,m:"S = ½rl",n:"호의 길이 l이 궁금한 상황."},
+    {b:"등식의 성질",g:1,m:"양변에 <span class='hl'>×2</span> &nbsp;→&nbsp; 2S = rl",n:"양변에 똑같이 곱했으니 등식은 그대로 참."},
+    {b:"등식의 성질",g:1,m:"양변을 <span class='hl'>÷r</span> &nbsp;→&nbsp; <span class='hl2'>l = 2S/r</span>",n:"완성! 새 공식을 외운 게 아니라, 그 자리에서 만들었어요."},
+  ]));
+  $("#rearr-r").addEventListener("click",()=>show([
+    {b:"시작",g:0,m:"S = ½rl",n:"이번엔 반지름 r이 궁금한 상황."},
+    {b:"등식의 성질",g:1,m:"양변에 <span class='hl'>×2</span> &nbsp;→&nbsp; 2S = rl",n:""},
+    {b:"등식의 성질",g:1,m:"양변을 <span class='hl'>÷l</span> &nbsp;→&nbsp; <span class='hl2'>r = 2S/l</span>",n:"같은 식, 다른 옷."},
+  ]));
+})();
+
+/* ================================================================
+   CHECK QUESTIONS
+================================================================ */
+const CHECKS={
+ 0:{items:[
+  {q:"현 AB와 호 AB로 둘러싸인 부분(반지름은 경계에 없음!)의 이름은?",opts:["부채꼴","활꼴","할선","중심각"],ans:1,
+   sol:[{t:"경계선을 읽는다: 현 1개 + 호 1개 → 활시위 + 활대 모양"},{t:"→ 활꼴",m:1},{t:"부채꼴이려면 경계에 반지름 2개가 있어야 하고, 할선은 넓이가 아니라 직선의 이름!"}]},
+  {q:"O/X — 현은 양쪽으로 끝없이 뻗어 나가는 직선이다.",opts:["O","X"],ans:1,
+   sol:[{t:"현 = 원 위의 두 점을 잇는 선분 (끝이 있다)",m:1},{t:"끝없이 뻗는 직선은 할선. 한 글자 차이, 완전히 다른 도형!"}]},
+  {q:"중심각이 90°인 부채꼴은 원 전체의 얼마를 차지할까?",opts:["1/2","1/3","1/4","1/90"],ans:2,
+   sol:[{t:"한 바퀴는 360°"},{t:"90/360 = 1/4",m:1},{t:"「x° = 한 바퀴 중 x만큼」— 이 감각이 이 단원의 전부예요."}]},
+ ]},
+ 1:{items:[
+  {q:"지름이 2배가 되면, 원주는 어떻게 될까?",opts:["2배","4배","π배","변하지 않는다"],ans:0,
+   sol:[{t:"원주 = π × 지름 (원주율의 정의를 뒤집은 것)",m:1},{t:"지름이 2배면 → π × (2×지름) = 2 × 원주",m:1},{t:"π는 그대로 있고, 지름을 따라 원주도 정직하게 2배."}]},
+  {q:"O/X — π는 소수점 아래 어딘가에서 끝나는 수이다.",opts:["O","X"],ans:1,
+   sol:[{t:"π = 3.14159265… 끝나지도, 반복되지도 않는다"},{t:"숫자로 다 쓸 수 없어서 이름(π)을 붙인 것!",m:1}]},
+  {q:"아르키메데스가 정다각형을 이용한 진짜 이유는?",opts:["다각형이 원보다 그리기 쉬워서","다각형의 둘레는 계산으로 정확히 구할 수 있어서","π 값을 이미 알고 있어서","원을 그릴 도구가 없어서"],ans:1,
+   sol:[{t:"원주는 직접 잴 수 없다. 하지만 다각형 둘레는 변 길이의 합이라 계산 가능!"},{t:"안쪽 다각형 둘레 < 원주 < 바깥 다각형 둘레",m:1},{t:"→ 변을 늘릴수록 π가 사이에 갇혀서 점점 정확해진다."}]},
+ ]},
+ 2:{items:[
+  {q:"조각을 재배열한 직사각형에서, 가로의 길이가 πr인 이유는?",opts:["원주 2πr가 위쪽·아래쪽으로 반씩 나뉘기 때문","반지름이 π배가 되기 때문","지름을 반으로 접었기 때문","약속이라서"],ans:0,
+   sol:[{t:"조각들의 곡선 부분(호)을 전부 합치면 = 원주 2πr"},{t:"위·아래로 번갈아 끼웠으니 위쪽 절반 + 아래쪽 절반"},{t:"→ 가로 = 2πr ÷ 2 = πr",m:1}]},
+  {q:"반지름이 9인 원의 넓이는?",opts:["18π","81π","9π","81"],ans:1,
+   sol:[{t:"넓이 = πr² = π × 9²",m:1},{t:"= 81π",m:1},{t:"9²을 18로 쓰는 실수(9×2)가 정말 많아요. 제곱은 「자기 자신을 곱하기」! 그리고 81만 쓰면 π가 서운해합니다."}]},
+ ]},
+ 3:{items:[
+  {q:"같은 원에서 중심각이 40° : 120°인 두 부채꼴, 호의 길이의 비는?",opts:["1 : 3","1 : 2","1 : 9","3 : 1"],ans:0,
+   sol:[{t:"호의 길이는 중심각에 정비례 (도장 찍기의 결론!)"},{t:"40 : 120 = 1 : 3",m:1},{t:"넓이의 비도 똑같이 1 : 3. 하나의 원리, 두 개의 답."}]},
+  {q:"O/X — 같은 원에서 중심각이 2배가 되면 현의 길이도 2배가 된다.",opts:["O","X"],ans:1,
+   sol:[{t:"현은 원을 따라가지 않고 질러가는 선분"},{t:"40°→80°일 때 현은 약 1.88배 (2배에 못 미침)",m:1},{t:"정비례하는 것: 호, 부채꼴 넓이 / 비례하지 않는 것: 현, 활꼴 넓이."}]},
+ ]},
+ 4:{items:[
+  {q:"반지름 6, 중심각 60°인 부채꼴의 호의 길이는?",opts:["π","2π","6π","12π"],ans:1,
+   sol:[{t:"l = 2πr × x/360",m:1},{t:"= 2π×6 × 60/360 = 12π × 1/6",m:1},{t:"= 2π",m:1}]},
+  {q:"반지름 9, 중심각 80°인 부채꼴의 넓이는? ✏️ 종이에 쓰면서!",opts:["18π","81π","20π","16π"],ans:0,
+   sol:[{t:"S = πr² × x/360 = 81π × 80/360",m:1},{t:"80/360 = 2/9 로 먼저 약분!",m:1},{t:"= 81π × 2/9 = 18π",m:1},{t:"81×80을 머리로 하려다 미끄러지는 문제예요. 약분 먼저 → 종이에 쓴 사람이 이깁니다."}]},
+  {q:"거꾸로! 반지름 4인 부채꼴의 호의 길이가 2π일 때, 중심각은?",opts:["45°","60°","90°","120°"],ans:2,
+   sol:[{t:"구하는 것을 x로 두고 식을 세운다 (첫 줄!)",m:0},{t:"2π×4 × x/360 = 2π",m:1},{t:"양변을 2π로 나누면 → 4 × x/360 = 1 → x/360 = 1/4",m:1},{t:"→ x = 90°",m:1},{t:"공식에 넣는 문제가 아니라 방정식을 푸는 문제. 중학교 수학이 원하는 게 바로 이거예요."}]},
+ ]},
+ 5:{items:[
+  {q:"반지름 6, 호의 길이 4π인 부채꼴의 넓이는?",opts:["24π","12π","10π","48π"],ans:1,
+   sol:[{t:"중심각을 몰라도 OK — S = ½rl",m:1},{t:"= ½ × 6 × 4π = 12π",m:1}]},
+  {q:"거꾸로! 넓이가 15π, 반지름이 5인 부채꼴의 호의 길이는?",opts:["3π","6π","15π","30π"],ans:1,
+   sol:[{t:"방법 1 (뒤집기): l = 2S/r = 2×15π ÷ 5 = 6π",m:1},{t:"방법 2 (대입 후 방정식): 15π = ½×5×l",m:1},{t:"양변 ×2: 30π = 5l → 양변 ÷5: l = 6π",m:1},{t:"어느 길로 가도 등식의 성질 하나면 충분!"}]},
+ ]},
+};
+function renderChecks(){
+  for(const tn in CHECKS){
+    const wrap=$("#checks-"+tn);
+    CHECKS[tn].items.forEach((item,qi)=>{
+      const card=document.createElement("div");
+      card.className="check-item";
+      const solHtml=item.sol.map((s,i)=>`<div class="sline"><span class="sno">${i+1}</span><span class="${s.m?'smath':''}">${s.t}</span></div>`).join("");
+      card.innerHTML=`
+        <div class="qhead"><span class="qno">문제 ${qi+1}</span><span class="qtext">${item.q}</span></div>
+        <div class="opt-grid">${item.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join("")}</div>
+        <div class="verdict"></div>
+        <button class="btn ghost sm" style="margin-top:8px">풀이 보기</button>
+        <div class="sol">${solHtml}</div>`;
+      const verdict=card.querySelector(".verdict");
+      const solBtn=card.querySelector(".btn");
+      const sol=card.querySelector(".sol");
+      const already=progress[tn]&&progress[tn]["q"+qi];
+      if(already){
+        card.querySelectorAll(".opt").forEach(b=>{
+          if(+b.dataset.i===item.ans)b.classList.add("correct");
+          b.disabled=true;
+        });
+        verdict.className="verdict ok";verdict.textContent="정답! ⭕ (지난번에 해결)";
+      }
+      card.querySelectorAll(".opt").forEach(b=>{
+        b.addEventListener("click",()=>{
+          if(+b.dataset.i===item.ans){
+            card.querySelectorAll(".opt").forEach(o=>{o.disabled=true;o.classList.remove("wrong");});
+            b.classList.add("correct");
+            verdict.className="verdict ok";verdict.textContent="정답! ⭕";
+            progress[tn]=progress[tn]||{};progress[tn]["q"+qi]=true;
+            store.set("circle_progress",progress);
+            drawWheel();
+          }else{
+            b.classList.add("wrong");
+            verdict.className="verdict no";
+            verdict.textContent="✖ 다시 한 번 — 감으로 고르지 말고, 종이에 한 줄 써 보면 보여요.";
+            setTimeout(()=>b.classList.remove("wrong"),900);
+          }
+        });
+      });
+      solBtn.addEventListener("click",()=>{sol.classList.toggle("open");solBtn.textContent=sol.classList.contains("open")?"풀이 접기":"풀이 보기";});
+      wrap.appendChild(card);
+    });
+  }
+}
+
+/* ================================================================
+   NOTES — 네 말로 써보기
+================================================================ */
+const NOTE_PROMPTS={
+ 0:"오늘 만난 용어 중 가장 헷갈렸던 한 쌍을 골라, 그 차이를 한 문장으로 써 보세요.",
+ 1:"π가 무엇인지, 수학을 전혀 모르는 친구에게 설명하듯 한 문장으로 써 보세요.",
+ 2:"재배열한 직사각형의 가로가 왜 πr인지, 한 문장으로 써 보세요.",
+ 3:"호의 길이가 왜 중심각에 정비례하는지, ‘합동’이라는 단어를 꼭 넣어 한 문장으로 써 보세요.",
+ 4:"호의 길이를 주고 중심각을 묻는 ‘거꾸로 문제’ — 풀이의 첫 줄에 무엇을 써야 할까요?",
+ 5:"S = ½rl 을 잊어버렸을 때, 그 자리에서 다시 만들어내는 방법을 한 문장으로 써 보세요.",
+};
+let notes=store.get("circle_notes",{});
+function renderNotes(){
+  for(const tn in NOTE_PROMPTS){
+    const box=$("#notes-"+tn);
+    box.innerHTML=`<h3>✍️ 네 말로 써보기</h3><p>${NOTE_PROMPTS[tn]}</p>
+      <textarea placeholder="머리에 있는 생각을 글로 꺼내는 연습이에요. 짧아도 좋아요!">${notes[tn]||""}</textarea>
+      <div class="nrow"><button class="btn gold sm">저장</button><span class="saved">저장했어요 ✓</span></div>`;
+    const ta=box.querySelector("textarea"),btn=box.querySelector("button"),ok=box.querySelector(".saved");
+    btn.addEventListener("click",()=>{
+      notes[tn]=ta.value;store.set("circle_notes",notes);
+      ok.classList.add("show");setTimeout(()=>ok.classList.remove("show"),1600);
+    });
+  }
+}
+
+/* ================================================================
+   init
+================================================================ */
+renderChecks();
+renderNotes();
+drawWheel();
+showTab(store.get("circle_lasttab",0));
+</script>
+</body>
+</html>

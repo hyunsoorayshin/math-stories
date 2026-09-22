@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중1 수학 — 공식이 아니라 이야기</title>
+<meta name="description" content="중학교 1학년 수학을 공식 암기가 아니라 이야기로 배우는 학습·복습 사이트.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#26244f;
+  --indigo-900:#312e81;
+  --indigo-700:#4338ca;
+  --indigo-500:#6366f1;
+  --indigo-100:#e0e7ff;
+  --indigo-050:#eef1ff;
+  --gold-700:#a97b0a;
+  --gold:#d4a017;
+  --gold-soft:#f9efd4;
+  --paper:#fbfaf7;
+  --card:#ffffff;
+  --line:#dcdaea;
+  --muted:#5a5880;
+  --r-lg:16px;
+  --r-md:12px;
+  --shadow:0 1px 2px rgba(38,36,79,.06),0 6px 20px rgba(38,36,79,.07);
+  --shadow-hi:0 4px 8px rgba(38,36,79,.10),0 14px 34px rgba(38,36,79,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.65;
+  font-size:16px;
+}
+.serif{font-family:'Gowun Batang','Noto Sans KR',serif}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+
+/* ---------- header ---------- */
+header.site{
+  background:linear-gradient(135deg,var(--indigo-900) 0%,#3b3a94 60%,#4a3f96 100%);
+  color:#fff;
+  padding:44px 0 38px;
+  position:relative;
+  overflow:hidden;
+}
+header.site::after{
+  content:"";
+  position:absolute;right:-70px;top:-70px;
+  width:260px;height:260px;border-radius:50%;
+  border:2px solid rgba(242,207,107,.28);
+  box-shadow:0 0 0 26px rgba(255,255,255,.03) inset;
+}
+.head-inner{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.18);
+  color:#e7e9ff;
+  padding:5px 13px;border-radius:999px;
+  font-size:12.5px;font-weight:700;letter-spacing:.02em;
+}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#f2cf6b}
+header.site h1{
+  font-family:'Gowun Batang',serif;
+  font-size:clamp(28px,6vw,44px);font-weight:700;
+  letter-spacing:-.01em;margin:16px 0 10px;
+}
+header.site h1 .gold{color:#f2cf6b}
+header.site p.tag{
+  font-size:clamp(13px,2.8vw,16px);color:#cdd3ff;font-weight:400;max-width:44ch;
+}
+
+/* ---------- semester switch ---------- */
+nav.sem{
+  position:sticky;top:0;z-index:50;
+  background:rgba(251,250,247,.94);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.sem-inner{display:flex;gap:6px;padding:12px 16px;max-width:880px;margin:0 auto}
+.sem-btn{
+  flex:0 0 auto;
+  border:1.5px solid var(--line);
+  background:#fff;color:var(--ink);
+  border-radius:999px;
+  padding:8px 18px;
+  font-size:14px;font-weight:700;
+  font-family:inherit;cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.sem-btn.active{background:var(--indigo-900);border-color:var(--indigo-900);color:#fff}
+.sem-btn .soon{
+  font-size:10.5px;font-weight:900;letter-spacing:.02em;
+  background:var(--gold-soft);color:var(--gold-700);
+  padding:2px 7px;border-radius:999px;
+}
+.sem-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---------- main ---------- */
+main{padding:30px 0 64px}
+.sempanel{display:none}
+.sempanel.active{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.secbar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--indigo-900);color:#fff;
+  border-radius:10px;padding:11px 15px;
+  margin:0 0 18px;
+  box-shadow:var(--shadow);
+}
+.secbar .notch{width:6px;height:22px;border-radius:3px;background:var(--gold);flex:0 0 auto}
+.secbar h2{font-size:16.5px;font-weight:800;letter-spacing:-.01em}
+.secbar .sub{margin-left:auto;font-size:12px;color:#cdd3ff;font-weight:500}
+
+/* ---------- lesson cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.lesson{
+  display:flex;flex-direction:column;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  padding:20px;
+  box-shadow:var(--shadow);
+  text-decoration:none;color:inherit;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+  position:relative;overflow:hidden;
+}
+.lesson.live:hover{transform:translateY(-3px);box-shadow:var(--shadow-hi);border-color:var(--indigo-100)}
+.lesson.live:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.lesson .num{
+  font-family:'Gowun Batang',serif;
+  font-size:13px;font-weight:700;color:var(--gold-700);
+  letter-spacing:.06em;margin-bottom:8px;
+}
+.lesson .ico{
+  width:52px;height:52px;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--indigo-050);border-radius:14px;
+}
+.lesson h3{font-size:18px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px}
+.lesson p{font-size:13.5px;color:var(--muted);line-height:1.6;flex:1}
+.lesson .go{
+  margin-top:16px;display:inline-flex;align-items:center;gap:6px;
+  font-size:13.5px;font-weight:800;color:var(--indigo-700);
+}
+.lesson .go svg{transition:transform .16s ease}
+.lesson.live:hover .go svg{transform:translateX(4px)}
+
+.lesson.soon{opacity:.72;cursor:default}
+.lesson.soon .ico{background:#f1f0f5}
+.lesson .badge{
+  position:absolute;top:14px;right:14px;
+  font-size:10.5px;font-weight:900;letter-spacing:.03em;
+  background:var(--gold-soft);color:var(--gold-700);
+  padding:3px 9px;border-radius:999px;
+}
+.lesson .badge.on{background:#dcfce7;color:#15803d}
+
+/* empty / coming-soon panel */
+.emptybox{
+  background:var(--card);border:1px dashed var(--line);
+  border-radius:var(--r-lg);padding:38px 22px;text-align:center;
+  box-shadow:var(--shadow);
+}
+.emptybox .big{font-size:40px;margin-bottom:10px}
+.emptybox h3{font-size:18px;font-weight:800;margin-bottom:8px}
+.emptybox p{font-size:14px;color:var(--muted);max-width:40ch;margin:0 auto}
+
+/* ---------- footer ---------- */
+footer{
+  border-top:1px solid var(--line);
+  padding:26px 0 40px;
+  text-align:center;
+  font-size:12.5px;color:var(--muted);
+}
+footer .serif{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap head-inner">
+    <span class="eyebrow"><span class="dot"></span>중학교 1학년 수학</span>
+    <h1>공식이 아니라 <span class="gold">이야기</span></h1>
+    <p class="tag serif">공식을 외우기 전에, 공식이 태어난 이야기부터. 단원을 골라 천천히 탐험해 보세요.</p>
+  </div>
+</header>
+
+<nav class="sem" aria-label="학기 선택">
+  <div class="sem-inner">
+    <button class="sem-btn active" data-sem="2" aria-selected="true">2학기</button>
+    <button class="sem-btn" data-sem="1" aria-selected="false">1학기 <span class="soon">준비 중</span></button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ===================== 2학기 ===================== -->
+  <section class="sempanel active" id="sem-2">
+    <div class="secbar">
+      <span class="notch"></span>
+      <h2>2학기 단원</h2>
+      <span class="sub">차근차근 늘어날 거예요</span>
+    </div>
+
+    <div class="grid">
+
+      <!-- 원과 부채꼴 (완성) -->
+      <a class="lesson live" href="circle.html">
+        <span class="badge on">학습하기</span>
+        <span class="ico" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <circle cx="15" cy="15" r="11" stroke="#4338ca" stroke-width="2"/>
+            <path d="M15 15 L15 4 M15 15 L24.5 20.5" stroke="#d4a017" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15 4 A11 11 0 0 1 24.5 20.5" stroke="#d4a017" stroke-width="2.4" fill="none"/>
+          </svg>
+        </span>
+        <span class="num">단원 01</span>
+        <h3>원과 부채꼴</h3>
+        <p>원의 부품부터 호의 길이·넓이 공식이 왜 그렇게 생겼는지까지, 그림으로 직접 그려 보며 배워요.</p>
+        <span class="go">탐험 시작 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+
+      <!-- 다음 단원 자리 -->
+      <div class="lesson soon" aria-disabled="true">
+        <span class="badge">준비 중</span>
+        <span class="ico" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <path d="M6 22 L15 6 L24 22 Z" stroke="#9a97b8" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="num">단원 02</span>
+        <h3>다음 단원</h3>
+        <p>새로운 단원이 곧 여기에 올라올 거예요.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 1학기 ===================== -->
+  <section class="sempanel" id="sem-1">
+    <div class="secbar">
+      <span class="notch"></span>
+      <h2>1학기 단원</h2>
+      <span class="sub">준비 중</span>
+    </div>
+    <div class="emptybox">
+      <div class="big" aria-hidden="true">📚</div>
+      <h3>아직 준비 중이에요</h3>
+      <p>1학기 단원은 앞으로 하나씩 추가될 예정이에요. 조금만 기다려 주세요!</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="serif">중1 수학 · 공식이 아니라 이야기</p>
+    <p style="margin-top:4px">천천히, 그러나 확실하게.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var btns = document.querySelectorAll('.sem-btn');
+  var panels = { '1': document.getElementById('sem-1'), '2': document.getElementById('sem-2') };
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var sem = btn.getAttribute('data-sem');
+      btns.forEach(function(b){
+        var on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      Object.keys(panels).forEach(function(k){
+        panels[k].classList.toggle('active', k === sem);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
